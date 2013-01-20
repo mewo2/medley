@@ -1,0 +1,17 @@
+Package: medley
+Maintainer: Martin O'Leary <m.e.w.oleary@gmail.com>
+Author: Martin O'Leary
+Version: 0.1.0
+License: BSD
+Title: A system for blending predictive models
+Description: Medley is a package which implements the Caruana et al., 2004
+    algorithm for stepwise greedy ensemble selection in R, allowing disparate
+    regression models to be combined easily.
+Suggests:
+    roxygen2,
+    e1071
+Collate:
+    'medley-package.r'
+    'errfuncs.r'
+    'medley.r'
+    'wrappers.r'
