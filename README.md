@@ -1,35 +1,57 @@
-## What is Medley? ##
+## An issue in Medley ##
 
-Medley is an R package which implements the Caruana et al., 2004 algorithm for
-greedy stepwise ensemble selection for regression models.
+This script doesn't work properly
+```
+require(medley);
+require(e1071);
 
-The idea behind medley is to make the creation of "ensembles" or "blends" of
-models as simple as possible. Individual models can be produced by varying
-hyperparameters or input feature sets, as well as by changing the underlying
-model code.
+data(swiss)
 
-## Usage example ##
+x <- swiss[,1:5];
+y <- swiss[,6];
+set.seed(1)
+train <- sample(nrow(swiss), 30);
+m <- create.medley(x[train,], y[train]);
+for (gamma in c(1e-3, 2e-3, 5e-3, 1e-2, 2e-2, 5e-2, 1e-1)) {
+   m <- add.medley(m, svm, list(gamma=gamma));
+}
+# use only the best 80% of individual models
+m <- prune.medley(m, 0.8)
+p <- predict(m, x[-train,]);
+rmse(p, y[-train]);
+```
 
-    require(medley);
-    require(randomForest);
-    require(e1071);
-    
-    # x and y are the training predictors and responses respectively
-    m <- create.medley(x, y, errfunc=rmse);
+Output:
+```
+CV model 1 svm (gamma = 0.001) time: 0.03 error: 2.649394 
+CV model 2 svm (gamma = 0.002) time: 0.02 error: 2.645305 
+CV model 3 svm (gamma = 0.005) time: 0.03 error: 2.615573 
+CV model 4 svm (gamma = 0.01) time: 0.04 error: 2.607492 
+CV model 5 svm (gamma = 0.02) time: 0.03 error: 2.599948 
+CV model 6 svm (gamma = 0.05) time: 0.03 error: 2.646888 
+CV model 7 svm (gamma = 0.1) time: 0.04 error: 2.604546 
+Sampled...
+Error in apply(mixpred, 1, mixer) : dim(X) must have a positive length
+Error in mean((true - pred)^2) : object 'p' not found
+```    
 
-    # add SVMs for a variety of gamma parameters
-    for (g in 1:10) {
-      m <- add.medley(m, svm, list(gamma=1e-3 * g));
-    }
+The problem is in `medley.prune` function.
 
-    # add random forests with varying mtry parameter
-    for (mt in c(5, 10, 20, 50)) {
-      m <- add.medley(m, randomForest, list(mtry=mt));
-    }
-
-    # use only the best 80% of individual models
-    m <- prune.medley(m, 0.8);
-
-    # predict using new predictor matrix newx
-    p <- predict(m, newx);
+**`R.version`**
+```
+platform       x86_64-w64-mingw32          
+arch           x86_64                      
+os             mingw32                     
+system         x86_64, mingw32             
+status                                     
+major          3                           
+minor          0.0                         
+year           2013                        
+month          04                          
+day            03                          
+svn rev        62481                       
+language       R                           
+version.string R version 3.0.0 (2013-04-03)
+nickname       Masked Marvel 
+```
 
