@@ -1,6 +1,6 @@
 ## An issue in Medley ##
 
-This script doesn't work properly
+This script didn't work properly
 ```
 require(medley);
 require(e1071);
@@ -35,7 +35,7 @@ Error in apply(mixpred, 1, mixer) : dim(X) must have a positive length
 Error in mean((true - pred)^2) : object 'p' not found
 ```    
 
-The problem is in `medley.prune` function.
+The problem was in `predict.medley` function.
 
 **`R.version`**
 ```
