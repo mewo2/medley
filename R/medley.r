@@ -164,9 +164,14 @@ predict.medley <- function (object, newdata, seed=c(), min.members=5, max.member
       s <- sample(length(object$y), replace=T);
     }
     model.sample <- sample(length(object$models), length(object$models) * .8);
-    cat('Sampled...');
+    cat('Sampled...\n');
     if (length(seed) == 0) {
       errs <- sapply(object$cv[model.sample], function(pred) object$errfunc(object$y[s], pred[s]));
+      
+      # If length(errs) < min.members then mix will have NA values
+      # Let us fix it
+      min.members <- min(length(errs), min.members)
+      
       mix <- model.sample[order(errs)[1:min.members]];
     
     } else {
@@ -174,6 +179,7 @@ predict.medley <- function (object, newdata, seed=c(), min.members=5, max.member
     }
     mixpred <- simplify2array(object$cv[mix]);
     
+    # Get an error when mix (mixpred) contains NA value(s)
     best.err <- object$errfunc(object$y[s], apply(mixpred, 1, mixer)[s]);
     
     while(length(mix) < max.members) {
