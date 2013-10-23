@@ -167,6 +167,7 @@ predict.medley <- function (object, newdata, seed=c(), min.members=5, max.member
     cat('Sampled...');
     if (length(seed) == 0) {
       errs <- sapply(object$cv[model.sample], function(pred) object$errfunc(object$y[s], pred[s]));
+      min.members <- min(length(errs), min.members)
       mix <- model.sample[order(errs)[1:min.members]];
     
     } else {
